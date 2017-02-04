@@ -27,7 +27,7 @@ server.post('/api/messages', connector.listen());
 
 bot.dialog('/', [
     function (session) {
-        builder.Prompts.choice(session, "Which category?", newsCats)
+        builder.Prompts.choice(session, "Which category?", newsCats, { listStyle: builder.ListStyle.button });
     },
     function (session, results) {
         if (results.response) {
