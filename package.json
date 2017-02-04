@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/dougperkes/NewsBot-Sample/issues"
   },
-  "homepage": "https://github.com/dougperkes/NewsBot-Sample#readme"
+  "homepage": "https://github.com/dougperkes/NewsBot-Sample#readme",
+  "dependencies": {
+    "botbuilder": "^3.6.0",
+    "dotenv": "^4.0.0",
+    "restify": "^4.3.0"
+  }
 }
