@@ -5,7 +5,7 @@ npm-debug.log*
 
 .env
 .vscode
-temp
+temp/*wav
 
 # Runtime data
 pids
