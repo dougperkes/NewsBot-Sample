@@ -1,6 +1,7 @@
 const restify = require('restify');
 const builder = require('botbuilder');
 const news = require('./news');
+const speech = require('./bingSpeech');
 
 //=========================================================
 // Bot Setup
@@ -35,38 +36,51 @@ bot.dialog('/', [
             // var region = salesData[results.response.entity];
             var cat = results.response.entity;
             session.send("You selected " + cat + ". Retrieving articles...");
+            speech.getAudio("You selected the category " + cat).then(sasUrl => {
+                console.log(sasUrl);
+                var audioCard = new builder.AudioCard(session)
+                    .autostart(true)
+                    .media([builder.CardMedia.create(session, sasUrl)])
+                    .title("You selected " + cat + ". Retrieving articles...");
+                session.send(audioCard);
+                return news.article(cat);
+            })
+                .then(function (data) {
+                    var newsArticles = data.results;
+                    var articleTitles = newsArticles.slice(0, 5)
+                        .map((newsItem, index) => `Article ${(index+1)}. ${newsItem.title}.`)
+                        .join(". ");
+                    return speech.getAudio(articleTitles).then(sasUrl => {
+                        var articles = newsArticles.slice(0, 5).map(function (newsItem) {
+                            var item = new builder.ThumbnailCard(session)
+                                .title(newsItem.title)
+                                .text(newsItem.abstract)
+                                .tap(new builder.CardAction.openUrl(session, newsItem.url));
+                            if (newsItem.multimedia && newsItem.multimedia.length > 0) {
+                                item.images([
+                                    builder.CardImage.create(session, newsItem.multimedia[0].url)
+                                ]);
+                            }
+                            return item;
+                        });
 
-            news.article(cat).then(function (data) {
-                var newsArticles = data.results;
 
-                var articles = newsArticles.slice(0, 5).map(function (newsItem) {
-                    var item = new builder.ThumbnailCard(session)
-                        .title(newsItem.title)
-                        .text(newsItem.abstract)
-                        .tap(new builder.CardAction.openUrl(session, newsItem.url));
-                    if (newsItem.multimedia && newsItem.multimedia.length > 0) {
-                        item.images([
-                            builder.CardImage.create(session, newsItem.multimedia[0].url)
-                        ]);
-                    }
-                    return item;
+                        var msg = new builder.Message(session)
+                            .attachments(articles).attachmentLayout('carousel')
+                            .text("### Displaying '" + cat + "' articles 1-5")
+                            .textFormat("markdown");
+                        session.send(msg);
+                        session.send(sasUrl);
+
+                    });
+
+                }).catch((err) => {
+                    console.error(err);
+                    session.send("Sorry. Sad kitty.");
+
                 });
-
-
-                var msg = new builder.Message(session)
-                    .attachments(articles).attachmentLayout('carousel')
-                    .text("### Displaying '" + cat + "' articles 1-5")
-                    .textFormat("markdown");
-                session.send(msg);
-                
-            }).catch((err) => {
-                console.error(err);
-                session.send("Sorry. Sad kitty.");
-
-            });
         } else {
             session.send("ok");
         }
     }
-]
-);
+]);

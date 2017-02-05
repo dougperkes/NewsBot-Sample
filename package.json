@@ -17,12 +17,16 @@
   },
   "homepage": "https://github.com/dougperkes/NewsBot-Sample#readme",
   "dependencies": {
+    "azure-storage": "^2.0.0",
+    "bingspeech-api-client": "^2.2.0",
     "botbuilder": "^3.6.0",
+    "botbuilder-calling": "^3.0.1",
     "dotenv": "^4.0.0",
-    "restify": "^4.3.0",
-    "node-fetch": "^1.6.3"
+    "node-fetch": "^1.6.3",
+    "randomatic": "^1.1.6",
+    "restify": "^4.3.0"
   },
   "devDependencies": {
     "jest": "^18.1.0"
-  } 
+  }
 }
