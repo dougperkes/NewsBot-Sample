@@ -40,7 +40,6 @@ bot.dialog('/', [
                 var newsArticles = data.results;
 
                 var articles = newsArticles.slice(0, 5).map(function (newsItem) {
-                    console.log(newsItem);
                     var item = new builder.ThumbnailCard(session)
                         .title(newsItem.title)
                         .text(newsItem.abstract)
