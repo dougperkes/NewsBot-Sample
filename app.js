@@ -37,15 +37,14 @@ bot.dialog('/', [
             session.send("You selected " + cat + ". Retrieving articles...");
 
             news.article(cat).then(function (data) {
-                // add error handling
-                console.log(JSON.stringify(data));
                 var newsArticles = data.results;
 
                 var articles = newsArticles.slice(0, 5).map(function (newsItem) {
-                    var item = new builder.HeroCard(session)
+                    console.log(newsItem);
+                    var item = new builder.ThumbnailCard(session)
                         .title(newsItem.title)
                         .text(newsItem.abstract)
-                        .tap(builder.CardAction.openUrl(session, newsItem.url));
+                        .tap(new builder.CardAction.openUrl(session, newsItem.url));
                     if (newsItem.multimedia && newsItem.multimedia.length > 0) {
                         item.images([
                             builder.CardImage.create(session, newsItem.multimedia[0].url)
@@ -56,11 +55,14 @@ bot.dialog('/', [
 
 
                 var msg = new builder.Message(session)
-                    .attachments(articles);
+                    .attachments(articles).attachmentLayout('carousel');
                 session.send(msg);
-            })
+                
+            }).catch((err) => {
+                console.error(err);
+                session.send("Sorry. Sad kitty.");
 
-            // session.send("We sold %(units)d units for a total of %(total)s.", region); 
+            });
         } else {
             session.send("ok");
         }
