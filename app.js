@@ -54,7 +54,9 @@ bot.dialog('/', [
 
 
                 var msg = new builder.Message(session)
-                    .attachments(articles).attachmentLayout('carousel');
+                    .attachments(articles).attachmentLayout('carousel')
+                    .text("### Displaying '" + cat + "' articles 1-5")
+                    .textFormat("markdown");
                 session.send(msg);
                 
             }).catch((err) => {
